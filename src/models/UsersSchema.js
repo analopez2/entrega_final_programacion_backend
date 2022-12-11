@@ -11,4 +11,4 @@ const UsersSchema = mongoose.Schema(
   { timestamps: true },
 );
 
-export default { UsersSchema };
+export { UsersSchema };

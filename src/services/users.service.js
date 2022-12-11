@@ -11,7 +11,8 @@ export default class UsersService {
   updateById = async (id, user) => {
     const element = await this.dao.findById(id);
 
-    if (!element) return { error: 'Elemento no encontrado' };
+    if (!element) throw { status: 404, error: 'Usuario no encontrado' };
+
     return this.dao.updateById(id, user);
   };
   deleteById = (id) => {

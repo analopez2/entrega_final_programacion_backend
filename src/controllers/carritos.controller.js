@@ -6,7 +6,8 @@ const saveCarrito = async (req, res) => {
     const cartId = cart.id;
     res.send({ id: cartId });
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
@@ -20,7 +21,8 @@ const deleteCarrito = async (req, res) => {
       carritoEliminado: carritoDelete,
     });
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
@@ -30,19 +32,21 @@ const getProductsByCarrito = async (req, res) => {
     const cart = await carritosService.getCarritoById(id);
     res.send(cart.productos);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
 const saveProductByCarrito = async (req, res) => {
   try {
     const { id } = req.params;
-    const { productId } = req.body;
+    const { product_id } = req.body;
 
-    const cart = await carritosService.saveProductCart(id, productId);
+    const cart = await carritosService.saveProductCart(id, product_id);
     res.send(cart);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
@@ -54,7 +58,8 @@ const deletedProductByCarrito = async (req, res) => {
     const cart = await carritosService.deteteProductCart(id, id_prod);
     res.send(cart);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 export default {

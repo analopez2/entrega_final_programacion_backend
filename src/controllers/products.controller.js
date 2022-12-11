@@ -6,7 +6,8 @@ const getAllProducts = async (req, res) => {
     let productos = await productsService.getProducts();
     res.send(productos);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 const saveProduct = async (req, res) => {
@@ -24,7 +25,8 @@ const saveProduct = async (req, res) => {
     let result = await productsService.saveProduct(product);
     res.send(result);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
@@ -35,7 +37,8 @@ const getProductById = async (req, res) => {
     let product = await productsService.getProductById(id);
     res.send(product);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
@@ -44,7 +47,7 @@ const updateProductById = async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion, codigo, foto, precio, stock } = req.body;
 
-    const product = await JOI_VALIDATOR.product.validateAsync({
+    const product = await productValidation.validateAsync({
       nombre,
       descripcion,
       codigo,
@@ -56,7 +59,8 @@ const updateProductById = async (req, res) => {
     let productUpdate = await productsService.updateProductById(id, product);
     res.send(productUpdate);
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 
@@ -70,7 +74,8 @@ const deleteProductById = async (req, res) => {
       productoEliminado: productDelete,
     });
   } catch (error) {
-    res.send({ status: 'error', error: error });
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
   }
 };
 

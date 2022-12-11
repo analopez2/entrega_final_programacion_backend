@@ -12,48 +12,38 @@ export default class CarritosService {
   saveCarrito = () => {
     return this.dao.save(BASE_CART);
   };
-  deleteById = (id) => {
-    const cart = this.dao.getById(id);
-    if (!cart) {
-      throw { error: 'Carrito no encontrado' };
-    }
+  deleteById = async (id) => {
+    let result = await this.dao.getById(id);
+    if (!result) throw { status: 404, error: 'Carrito no encontrado' };
 
     return this.dao.deleteById(id);
   };
   getCarritoById = async (id) => {
     let result = await this.dao.getById(id);
-    if (!result) {
-      throw { error: 'Carrito no encontrado' };
-    }
+    if (!result) throw { status: 404, error: 'Carrito no encontrado' };
+
     return result;
   };
-  saveProductCart = (id, productId) => {
-    const cart = this.dao.getById(id);
-    if (!cart) {
-      throw { error: 'Carrito no encontrado' };
-    }
-    const product = productsService.getProductById(productId);
-    if (!product) {
-      throw { error: 'Producto no encontrado' };
-    }
+  saveProductCart = async (id, productId) => {
+    const cart = await this.dao.getById(id);
+    if (!cart.id) throw { status: 404, error: 'Carrito no encontrado' };
+
+    const product = await productsService.getProductById(productId);
+    if (!product) throw { status: 404, error: 'Producto no encontrado' };
 
     cart.productos.push(product);
 
     return this.dao.updateById(id, cart);
   };
-  deteteProductCart = (id, productId) => {
-    const cart = this.dao.getById(id);
-    if (!cart) {
-      throw { error: 'Carrito no encontrado' };
-    }
+  deteteProductCart = async (id, productId) => {
+    const cart = await this.dao.getById(id);
+    if (!cart) throw { status: 404, error: 'Carrito no encontrado' };
 
     const product = cart.productos.find((e) => e.id == productId);
 
-    if (!product) {
-      throw { error: 'Producto no encontrado' };
-    }
+    if (!product) throw { status: 404, error: 'Producto no encontrado' };
 
-    cart.productos = cart.productos.filter((e) => e.id != id_prod);
+    cart.productos = cart.productos.filter((e) => e.id != productId);
 
     return this.dao.updateById(id, cart);
   };

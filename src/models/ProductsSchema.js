@@ -10,4 +10,4 @@ const ProductsSchema = new mongoose.Schema({
   timestamp: { type: Date, required: true },
 });
 
-export default { ProductsSchema };
+export { ProductsSchema };

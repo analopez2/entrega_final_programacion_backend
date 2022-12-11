@@ -8,21 +8,21 @@ export default class ProductsService {
   saveProduct = (product) => {
     return this.dao.save(product);
   };
-  getProductById = (id) => {
-    let product = this.dao.getById(id);
-    if (!product) throw { error: 'Producto no encontrado' };
+  getProductById = async (id) => {
+    let product = await this.dao.getById(id);
+    if (!product) throw { status: 404, error: 'Producto no encontrado' };
 
     return product;
   };
-  updateProductById = (id, product) => {
-    const element = this.dao.findById(id);
+  updateProductById = async (id, product) => {
+    const element = await this.dao.getById(id);
+    if (!element) throw { status: 404, error: 'Producto no encontrado' };
 
-    if (!element) return { error: 'Producto no encontrado' };
     return this.dao.updateById(id, product);
   };
-  deleteById = (id) => {
-    const product = this.dao.getById(id);
-    if (!product) throw { error: 'Producto no encontrado' };
+  deleteById = async (id) => {
+    const product = await this.dao.getById(id);
+    if (!product) throw { status: 404, error: 'Producto no encontrado' };
 
     return this.dao.deleteById(id);
   };
