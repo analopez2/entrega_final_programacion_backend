@@ -19,7 +19,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(
   session({
-    secret: 'SecretTestClase',
+    secret: 'secret-Session-0.0.1-entregable-final',
     store: MongoStore.create({
       mongoUrl: config.UrlMongoDB,
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
