@@ -43,5 +43,5 @@ app.use('/api/productos', productsRouter);
 app.use('/api/carrito', carritossRouter);
 app.use('/api/sessions', sessionRouter);
 
-app.listen(8080, () => console.log('Listening'));
+app.listen(config.PORT, () => console.log(`Listening on port ${config.PORT}`));
 const connection = MongoDb.init();
