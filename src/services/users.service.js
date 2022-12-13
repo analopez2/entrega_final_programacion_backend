@@ -5,11 +5,17 @@ export default class UsersService {
   getUsers = () => {
     return this.dao.getAll();
   };
-  saveUser = (user) => {
+  getUserByEmail = (email) => {
+    return this.dao.getByEntity(email);
+  };
+  getUserById = (_id) => {
+    return this.dao.getByEntity(_id);
+  };
+  create = (user) => {
     return this.dao.save(user);
   };
   updateById = async (id, user) => {
-    const element = await this.dao.findById(id);
+    const element = await this.dao.getUserById(id);
 
     if (!element) throw { status: 404, error: 'Usuario no encontrado' };
 

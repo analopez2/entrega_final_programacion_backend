@@ -6,6 +6,7 @@ export default class ProductsService {
     return this.dao.getAll();
   };
   saveProduct = (product) => {
+    if (product.stock < 0) throw { status: 400, error: 'El stock no puede ser menor a 0' };
     return this.dao.save(product);
   };
   getProductById = async (id) => {
@@ -14,7 +15,9 @@ export default class ProductsService {
 
     return product;
   };
+
   updateProductById = async (id, product) => {
+    if (product.stock < 0) throw { status: 400, error: 'El stock no puede ser menor a 0' };
     const element = await this.dao.getById(id);
     if (!element) throw { status: 404, error: 'Producto no encontrado' };
 

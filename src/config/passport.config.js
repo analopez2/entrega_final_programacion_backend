@@ -1,6 +1,6 @@
 import passport from 'passport';
 import local from 'passport-local';
-import usersService from '../services/users.service.js';
+import { usersService } from '../services/index.js';
 import { createHash, isValidPassword } from '../utils.js';
 
 const LocalStrategy = local.Strategy;
@@ -10,16 +10,17 @@ const initializePassport = () => {
     'register',
     new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, email, password, done) => {
       try {
-        const { first_name, last_name, age } = req.body;
+        const { first_name, last_name, telefono, re_password } = req.body;
+        if (password != re_password) return done(null, false);
         if (!first_name || !last_name || !email || !password) return done(null, false);
-        let exists = await usersService.findOne({ email: email });
+        let exists = await usersService.getUserByEmail(email);
         if (exists) return done(null, false);
         let result = await usersService.create({
           first_name,
           last_name,
           email,
           password: createHash(password),
-          age: age,
+          telefono: telefono,
         });
         return done(null, result);
       } catch (error) {
@@ -33,7 +34,7 @@ const initializePassport = () => {
     new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
       try {
         if (!email || !password) return done(null, false);
-        let user = await usersService.findOne({ email: email });
+        let user = await usersService.getUserByEmail(email);
         if (!user) return done(null, false);
         if (!isValidPassword(user, password)) return done(null, false);
 
@@ -50,7 +51,7 @@ const initializePassport = () => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    let result = await usersService.findOne({ _id: id });
+    let result = await usersService.getUserById(id);
     return done(null, result);
   });
 };

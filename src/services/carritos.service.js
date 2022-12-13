@@ -28,10 +28,16 @@ export default class CarritosService {
     const cart = await this.dao.getById(id);
     if (!cart.id) throw { status: 404, error: 'Carrito no encontrado' };
 
-    const product = await productsService.getProductById(productId);
-    if (!product) throw { status: 404, error: 'Producto no encontrado' };
+    const productInput = await productsService.getProductById(productId);
+    if (!productInput) throw { status: 404, error: 'Producto no encontrado' };
 
-    cart.productos.push(product);
+    const product = { producto: productInput, cantidad: 1 };
+
+    if (cart.productos.length >= 0) {
+      const existeProducto = cart.productos.find((p) => p.producto._id == productId);
+      if (existeProducto) existeProducto.cantidad++;
+      else cart.productos.push(product);
+    }
 
     return this.dao.updateById(id, cart);
   };
