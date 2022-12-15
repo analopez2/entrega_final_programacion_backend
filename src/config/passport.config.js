@@ -3,6 +3,10 @@ import local from 'passport-local';
 import { carritosService, usersService } from '../services/index.js';
 import { createHash, isValidPassword } from '../utils.js';
 import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt';
+import mongoose from 'mongoose';
+
+const adminId = mongoose.Types.ObjectId();
+const adminCarritoId = mongoose.Types.ObjectId();
 
 const LocalStrategy = local.Strategy;
 const PRIVATE_KEY = 'llave-privada-token-JWT-00002020';
@@ -54,14 +58,14 @@ const initializePassport = () => {
         if (!email || !password) return done(null, false);
         if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
           let user = {
-            _id: '639a6d4mi9na185274d37037',
+            _id: adminId,
             email: email,
             first_name: 'Admin',
             last_name: '0001',
             telefono: '999999999',
             role: 'admin',
             avatar: '/uploads/avatar-descarga.png',
-            carrito: '639c6a4rr9it185274o37037',
+            carrito: adminCarritoId,
             direccion: '',
           };
           return done(null, user);

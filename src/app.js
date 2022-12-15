@@ -12,6 +12,7 @@ import sessionRouter from './routes/sessions.router.js';
 import { MongoDb } from './db/mongoDb/mongodb.js';
 import productsRouter from './routes/products.router.js';
 import carritossRouter from './routes/carritos.router.js';
+import ordenesRouter from './routes/ordenes.router.js';
 
 const app = express();
 app.use(express.json());
@@ -43,6 +44,7 @@ app.use('/', viewsRouter);
 app.use('/api/productos', productsRouter);
 app.use('/api/carrito', carritossRouter);
 app.use('/api/sessions', sessionRouter);
+app.use('/api/ordenes', ordenesRouter);
 
 app.listen(config.PORT, () => console.log(`Listening on port ${config.PORT}`));
 const connection = MongoDb.init();
