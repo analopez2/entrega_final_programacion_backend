@@ -1,7 +1,6 @@
-const IS_ADMIN = true;
-
 const isAdmin = (req, res, next) => {
-  if (!IS_ADMIN) {
+  let role = req.session.user.data.role;
+  if (role != 'admin') {
     return res.send({
       error: 403,
       descripcion: `ruta ${req.baseUrl} | method ${req.method} no autorizado`,

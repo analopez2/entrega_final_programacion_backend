@@ -17,6 +17,7 @@ const UsersSchema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'Carrito',
     },
+    direccion: String,
   },
   { timestamps: true },
 );

@@ -1,34 +1,8 @@
 import { carritosService } from '../services/index.js';
 
-const saveCarrito = async (req, res) => {
-  try {
-    const cart = await carritosService.saveCarrito();
-    const cartId = cart.id;
-    res.send({ id: cartId });
-  } catch (error) {
-    if (error.status) return res.status(error.status).send({ error: error });
-    res.status(500).send({ status: 'error', error: error.message });
-  }
-};
-
-const deleteCarrito = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const carritoDelete = await carritosService.deleteById(id);
-
-    res.send({
-      mensaje: 'Carrito eliminado',
-      carritoEliminado: carritoDelete,
-    });
-  } catch (error) {
-    if (error.status) return res.status(error.status).send({ error: error });
-    res.status(500).send({ status: 'error', error: error.message });
-  }
-};
-
 const getProductsByCarrito = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.session.user.data.carrito;
     const cart = await carritosService.getCarritoById(id);
     res.send(cart.productos);
   } catch (error) {
@@ -62,10 +36,20 @@ const deletedProductByCarrito = async (req, res) => {
     res.status(500).send({ status: 'error', error: error.message });
   }
 };
+
+const vaciarCarrito = async (req, res) => {
+  try {
+    const id = req.session.user.data.carrito;
+    const cart = await carritosService.vaciarCarrito(id);
+    res.send(cart);
+  } catch (error) {
+    if (error.status) return res.status(error.status).send({ error: error });
+    res.status(500).send({ status: 'error', error: error.message });
+  }
+};
 export default {
-  saveCarrito,
-  deleteCarrito,
   getProductsByCarrito,
   saveProductByCarrito,
   deletedProductByCarrito,
+  vaciarCarrito,
 };

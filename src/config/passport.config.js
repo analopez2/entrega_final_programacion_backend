@@ -21,7 +21,7 @@ const initializePassport = () => {
       try {
         if (!req.file) return done(null, false);
 
-        const { first_name, last_name, telefono, re_password } = req.body;
+        const { first_name, last_name, telefono, re_password, direccion } = req.body;
         if (password != re_password) return done(null, false);
         if (!first_name || !last_name || !email || !password) return done(null, false);
         let exists = await usersService.getUserByEmail(email);
@@ -36,6 +36,7 @@ const initializePassport = () => {
           telefono: telefono,
           avatar: `${req.protocol}://${req.hostname}:8080/uploads/${req.file.filename}`,
           carrito: carrito._id,
+          direccion: direccion,
         });
 
         return done(null, result);
@@ -47,8 +48,9 @@ const initializePassport = () => {
 
   passport.use(
     'login',
-    new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
+    new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, email, password, done) => {
       try {
+        if (req.session.user) return done(null, false);
         if (!email || !password) return done(null, false);
         if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
           let user = {
@@ -60,6 +62,7 @@ const initializePassport = () => {
             role: 'admin',
             avatar: '/uploads/avatar-descarga.png',
             carrito: '639c6a4rr9it185274o37037',
+            direccion: '',
           };
           return done(null, user);
         }

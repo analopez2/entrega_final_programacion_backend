@@ -12,12 +12,6 @@ export default class CarritosService {
   saveCarrito = () => {
     return this.dao.save(BASE_CART);
   };
-  deleteById = async (id) => {
-    let result = await this.dao.getById(id);
-    if (!result) throw { status: 404, error: 'Carrito no encontrado' };
-
-    return this.dao.deleteById(id);
-  };
   getCarritoById = async (id) => {
     let result = await this.dao.getById(id);
     if (!result) throw { status: 404, error: 'Carrito no encontrado' };
@@ -26,7 +20,7 @@ export default class CarritosService {
   };
   saveProductCart = async (id, productId) => {
     const cart = await this.dao.getById(id);
-    if (!cart.id) throw { status: 404, error: 'Carrito no encontrado' };
+    if (!cart) throw { status: 404, error: 'Carrito no encontrado' };
 
     const productInput = await productsService.getProductById(productId);
     if (!productInput) throw { status: 404, error: 'Producto no encontrado' };
@@ -52,5 +46,11 @@ export default class CarritosService {
     cart.productos = cart.productos.filter((e) => e.id != productId);
 
     return this.dao.updateById(id, cart);
+  };
+  vaciarCarrito = async (id) => {
+    let result = await this.dao.getById(id);
+    if (!result) throw { status: 404, error: 'Carrito no encontrado' };
+
+    return await this.dao.updateById(id, BASE_CART);
   };
 }
