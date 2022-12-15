@@ -23,7 +23,7 @@ app.use(
   session({
     secret: 'secret-Session-0.0.1-entregable-final',
     store: MongoStore.create({
-      mongoUrl: config.UrlMongoDB,
+      mongoUrl: config.URL_MONGO_DB,
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
       ttl: 100,
     }),

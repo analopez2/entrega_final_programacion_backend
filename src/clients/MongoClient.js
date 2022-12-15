@@ -4,7 +4,7 @@ import { config } from '../config/config.js';
 export default class MongoClient {
   constructor() {
     this.connection = mongoose.connect(
-      config.UrlMongoDB,
+      config.URL_MONGO_DB,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,

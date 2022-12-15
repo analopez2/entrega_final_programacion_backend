@@ -1,13 +1,11 @@
 import { createTransport } from 'nodemailer';
-
-const MAIL = 'anaplopez07@gmail.com';
-const PWD_MAIL = 'zittzndqjumxrsqb';
+import { config } from '../config/config.js';
 
 export const transporter = createTransport({
   service: 'gmail',
   port: 587,
   auth: {
-    user: MAIL,
-    pass: PWD_MAIL,
+    user: config.MAIL,
+    pass: config.PWD_MAIL,
   },
 });

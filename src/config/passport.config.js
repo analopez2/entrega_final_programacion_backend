@@ -4,19 +4,16 @@ import { carritosService, usersService } from '../services/index.js';
 import { createHash, isValidPassword } from '../utils.js';
 import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt';
 import mongoose from 'mongoose';
+import { config } from './config.js';
 
 const adminId = mongoose.Types.ObjectId();
 const adminCarritoId = mongoose.Types.ObjectId();
 
 const LocalStrategy = local.Strategy;
-const PRIVATE_KEY = 'llave-privada-token-JWT-00002020';
-const ADMIN_EMAIL = 'admin@gmail.com';
-const ADMIN_PASSWORD = 'admin1234';
-
 const initializePassport = () => {
   const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: PRIVATE_KEY,
+    secretOrKey: config.PRIVATE_KEY,
   };
 
   passport.use(
@@ -56,7 +53,7 @@ const initializePassport = () => {
       try {
         if (req.session.user) return done(null, false);
         if (!email || !password) return done(null, false);
-        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        if (email === config.ADMIN_EMAIL && password === config.ADMIN_PASSWORD) {
           let user = {
             _id: adminId,
             email: email,

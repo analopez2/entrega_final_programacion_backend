@@ -1,4 +1,4 @@
-export const login = (req, res, next) => {
+const login = (req, res, next) => {
   if (!req.session.user)
     return res.send({
       error: 'Error',
@@ -6,3 +6,5 @@ export const login = (req, res, next) => {
     });
   next();
 };
+
+export { login };

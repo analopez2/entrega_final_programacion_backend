@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
-
-const PRIVATE_KEY = 'llave-privada-token-JWT-00002020';
+import { config } from '../config/config.js';
 
 function generateToken(user) {
-  const token = jwt.sign({ data: user }, PRIVATE_KEY, { expiresIn: '1h' });
+  const token = jwt.sign({ data: user }, config.PRIVATE_KEY, { expiresIn: '1h' });
   return token;
 }
 
@@ -18,7 +17,7 @@ const registerFail = async (req, res) => {
 
 const loginUser = async (req, res) => {
   let token = generateToken(req.user);
-  let decodedToken = jwt.verify(token, PRIVATE_KEY);
+  let decodedToken = jwt.verify(token, config.PRIVATE_KEY);
 
   req.session.user = { ...decodedToken };
 
