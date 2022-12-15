@@ -68,7 +68,7 @@ export default class OrdenesService {
                   </html>`;
 
     let result = await transporter.sendMail({
-      from: 'Prueba',
+      from: 'Compras',
       to: email,
       subject: 'Compra Finalizada',
       html: message,
