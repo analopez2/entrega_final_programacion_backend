@@ -61,9 +61,9 @@ export default class MongoDao {
     }
   }
 
-  async getByEntity(entity) {
+  async getByEntity(options) {
     try {
-      const file = this.model.findOne({ entity: entity }).lean().exec();
+      const file = this.model.findOne(options).lean().exec();
       return file;
     } catch (error) {
       throw error;

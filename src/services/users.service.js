@@ -6,10 +6,10 @@ export default class UsersService {
     return this.dao.getAll();
   };
   getUserByEmail = (email) => {
-    return this.dao.getByEntity(email);
+    return this.dao.getByEntity({ email: email });
   };
-  getUserById = (_id) => {
-    return this.dao.getByEntity(_id);
+  getUserById = (id) => {
+    return this.dao.getByEntity({ _id: id });
   };
   create = (user) => {
     return this.dao.save(user);

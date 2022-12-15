@@ -16,6 +16,7 @@ import carritossRouter from './routes/carritos.router.js';
 const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
