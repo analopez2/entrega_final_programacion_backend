@@ -2,6 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import sessionController from '../controllers/session.controller.js';
 import { uploader } from '../config/multer.config.js';
+import { login } from '../middlewares/login.js';
 
 const router = Router();
 
@@ -18,6 +19,6 @@ router.post(
   sessionController.loginUser,
 );
 router.get('/loginfail', sessionController.loginFail);
-router.get('/logout', sessionController.logoutUser);
+router.get('/logout', login, sessionController.logoutUser);
 
 export default router;

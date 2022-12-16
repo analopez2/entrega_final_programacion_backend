@@ -39,11 +39,15 @@ export default class CarritosService {
     const cart = await this.dao.getById(id);
     if (!cart) throw { status: 404, error: 'Carrito no encontrado' };
 
-    const product = cart.productos.find((e) => e.id == productId);
+    const product = cart.productos.find((e) => e.producto._id == productId);
 
     if (!product) throw { status: 404, error: 'Producto no encontrado' };
 
-    cart.productos = cart.productos.filter((e) => e.id != productId);
+    if (product.cantidad >= 1) {
+      cart.productos = cart.productos.filter((e) => e.producto._id != productId);
+    } else {
+      product.cantidad--;
+    }
 
     return this.dao.updateById(id, cart);
   };
