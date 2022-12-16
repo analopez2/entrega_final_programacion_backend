@@ -12,10 +12,15 @@ const registerUser = async (req, res) => {
 };
 
 const registerFail = async (req, res) => {
-  res.status(500).send({ status: 'error', error: 'Register failed' });
+  let error = req.flash('errorRegister');
+  if (error) {
+    res.status(400).send({ status: 'error', error: error });
+  } else {
+    res.status(500).send({ status: 'error', error: 'Registro Fallido' });
+  }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   let token = generateToken(req.user);
   let decodedToken = jwt.verify(token, config.PRIVATE_KEY);
 
@@ -25,7 +30,12 @@ const loginUser = async (req, res) => {
 };
 
 const loginFail = async (req, res) => {
-  res.status(500).send({ status: 'error', error: 'Login failed' });
+  let error = req.flash('errorLogin');
+  if (error) {
+    res.status(400).send({ status: 'error', error: error });
+  } else {
+    res.status(500).send({ status: 'error', error: 'Login Fallido' });
+  }
 };
 
 const logoutUser = async (req, res) => {

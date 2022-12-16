@@ -13,4 +13,5 @@ export const config = {
   PWD_MAIL: process.env.PWD_MAIL,
   ADMIN_EMAIL: process.env.ADMIN_EMAIL,
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+  AVATAR: process.env.AVATAR,
 };

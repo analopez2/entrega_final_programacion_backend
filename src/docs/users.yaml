@@ -1,0 +1,128 @@
+# User
+
+components:
+  requestBodies:
+    nuevoUsuario:
+      type: object
+      properties:
+        first_name:
+          type: string
+          descripcion: Nombre del usuario
+        last_name:
+          type: string
+          descripcion: Apellido del usuario
+        email:
+          type: string
+          descripcion: Correo del usuario, campo único
+        telefono:
+          type: string
+          descripcion: Felefono del usuario
+        password:
+          type: string
+          descripcion: Contraseña del usuario
+        re_password:
+          type: string
+          descripción: Contraseña repetida del usuario
+        avatar:
+          type: file
+          descripcion: Imagen del usuario en la aplicacion, opcional
+        direccion:
+          type: string
+          descripcion: Dirección del usuario que se utilizará para los envíos
+      example:
+        first_name: Ana
+        last_name: Lopez
+        email: analopez@gmail.com
+        telefono: '+59899999999'
+        password: '123'
+        re_password: '123'
+        direccion: Calle A 6655
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: ObjectId
+          descripcion: Id autogenerada por mongo
+        first_name:
+          type: string
+          descripcion: Nombre del usuario
+        last_name:
+          type: string
+          descripcion: Apellido del usuario
+        email:
+          type: string
+          descripcion: Correo del usuario, campo único
+        telefono:
+          type: string
+          descripcion: Felefono del usuario
+        password:
+          type: string
+          descripcion: Contraseña Hasheada del usuario
+        role:
+          type: string
+          descripcion: Rol del usuario en la aplicación
+        avatar:
+          type: string
+          descripcion: Imagen del usuario en la aplicacion
+        carrito:
+          type: ObjectId
+          descripcion: Id autogenerado por mongo para un carrito asociado al usuario
+        direccion:
+          type: string
+          descripcion: Dirección del usuario que se utilizará para los envíos
+
+      example:
+        id: ObjectId("639a7be7072a772eaaa51fdf"),
+        first_name: Ana,
+        last_name: Lopez,
+        email: analopez@gmail.com,
+        telefono: +59899999999,
+        password: 5xrULgJH95RuQmUgQlYD,
+        role: user,
+        avatar: http://localhost:8080/uploads/avatar-descarga.png,
+        carrito: ObjectId("639a7be7072a772eaaa51fdd"),
+        direccion: Calle A 6655
+paths:
+  /api/sessions/register:
+    post:
+      summary: Registro de usuario
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/nuevoUsuario'
+      responses:
+        '200':
+          descripcion: El usuario se agregó correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  payload:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        descripcion: Id autogenerado por Mongo
+                      token:
+                        type: string
+                        descripcion: Token generado para el usuario
+        '500':
+          descritpion: Fallo en la creacion de usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  error:
+                    type: string

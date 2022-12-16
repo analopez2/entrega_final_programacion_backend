@@ -5,6 +5,7 @@ import { createHash, isValidPassword } from '../utils.js';
 import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt';
 import mongoose from 'mongoose';
 import { config } from './config.js';
+import { errors } from '../consts/const.js';
 
 const adminId = mongoose.Types.ObjectId();
 const adminCarritoId = mongoose.Types.ObjectId();
@@ -20,13 +21,16 @@ const initializePassport = () => {
     'register',
     new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, email, password, done) => {
       try {
-        if (!req.file) return done(null, false);
+        let avatar = config.AVATAR;
+        if (req.file) {
+          avatar = `${req.protocol}://${req.hostname}:8080/uploads/${req.file.filename}`;
+        }
 
         const { first_name, last_name, telefono, re_password, direccion } = req.body;
-        if (password != re_password) return done(null, false);
-        if (!first_name || !last_name || !email || !password) return done(null, false);
+        if (password != re_password) return done(null, false, req.flash('errorRegister', errors.credencialesInvalidas));
+        if (!first_name || !last_name || !email || !password) return done(null, false, req.flash('errorRegister', errors.invalidBody));
         let exists = await usersService.getUserByEmail(email);
-        if (exists) return done(null, false);
+        if (exists) return done(null, false, req.flash('errorRegister', errors.existingUser));
         let carrito = await carritosService.saveCarrito();
 
         let result = await usersService.create({
@@ -35,7 +39,7 @@ const initializePassport = () => {
           email,
           password: createHash(password),
           telefono: telefono,
-          avatar: `${req.protocol}://${req.hostname}:8080/uploads/${req.file.filename}`,
+          avatar: avatar,
           carrito: carrito._id,
           direccion: direccion,
         });
@@ -51,8 +55,8 @@ const initializePassport = () => {
     'login',
     new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, email, password, done) => {
       try {
-        if (req.session.user) return done(null, false);
-        if (!email || !password) return done(null, false);
+        if (req.session.user) return done(null, false, req.flash('errorLogin', errors.usuarioLogueado));
+        if (!email || !password) return done(null, false, req.flash('errorLogin', errors.invalidBody));
         if (email === config.ADMIN_EMAIL && password === config.ADMIN_PASSWORD) {
           let user = {
             _id: adminId,
@@ -68,8 +72,8 @@ const initializePassport = () => {
           return done(null, user);
         }
         let user = await usersService.getUserByEmail(email);
-        if (!user) return done(null, false);
-        if (!isValidPassword(user, password)) return done(null, false);
+        if (!user) return done(null, false, req.flash('errorLogin', errors.userNotFound));
+        if (!isValidPassword(user, password)) return done(null, false, req.flash('errorLogin', errors.credencialesInvalidas));
         return done(null, user);
       } catch (error) {
         return done(error);

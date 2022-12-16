@@ -1,6 +1,3 @@
-import { transporter } from '../clients/NodeMailer.js';
-import mailRegistro from '../helpers/mail.registro.js';
-
 export default class UsersService {
   constructor(dao) {
     this.dao = dao;
@@ -15,12 +12,6 @@ export default class UsersService {
     return this.dao.getByEntity({ _id: id });
   };
   create = async (user) => {
-    await transporter.sendMail({
-      from: 'Registro de Usuario',
-      to: user.email,
-      subject: 'Usuario Registrado',
-      html: mailRegistro.registerMessage(user.first_name),
-    });
     return this.dao.save(user);
   };
   updateById = async (id, user) => {
