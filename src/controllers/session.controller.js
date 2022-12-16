@@ -20,13 +20,13 @@ const registerFail = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res, next) => {
+const loginUser = async (req, res) => {
   let token = generateToken(req.user);
   let decodedToken = jwt.verify(token, config.PRIVATE_KEY);
 
   req.session.user = { ...decodedToken };
 
-  res.status(200).send({ status: 'success', user: req.session.user });
+  res.status(200).send({ status: 'success', user: req.session.user.data });
 };
 
 const loginFail = async (req, res) => {
@@ -39,10 +39,10 @@ const loginFail = async (req, res) => {
 };
 
 const logoutUser = async (req, res) => {
-  const nombre = req.session?.user?.first_name;
+  const nombre = req.session?.user?.data.first_name;
   req.session.destroy((err) => {
     if (err) return res.status(500).send('error');
-    res.send({ status: 'success', payload: nombre });
+    res.send({ status: 'success', payload: `Hasta luego ${nombre.toUpperCase()}!` });
   });
 };
 
