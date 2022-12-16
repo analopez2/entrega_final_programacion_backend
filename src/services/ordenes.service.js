@@ -1,5 +1,6 @@
 import { carritosService } from '../services/index.js';
 import { transporter } from '../clients/NodeMailer.js';
+import mailCompra from '../helpers/order.email.js';
 
 export default class OrdenesService {
   constructor(dao) {
@@ -31,47 +32,12 @@ export default class OrdenesService {
                          </tr border:1px>`;
       totalOrden += p.producto.precio * p.cantidad;
     });
-    //send email
-    let message = `<html>
-                    <head>
-                    <style>
-                    table, td, th {
-                      border: 1px solid black;
-                    }
-                    table {
-                      border-collapse: collapse;
-                      width: 100%;
-                    }
-                    td {
-                      text-align: center;
-                    }
-                    </style>
-                    </head>
-                    <body>
-                      <h1> Hola ${first_name.toUpperCase()} has finalizado tu compra </h1>
-                        <p> Estos son los datos de la misma </p>
-                        <div> 
-                          <p>Nº de compra: ${orden.numero_orden}</p>
-                          <table border:1px>
-                            <tr border:1px>
-                              <th border:1px>Producto</th>
-                              <th border:1px>Importe Unitario</th>
-                              <th border:1px>Cantidad</th>
-                            </tr border:1px>
-                            ${productosOrden} 
-                          </table border:1px> 
-                        </div>
-                        <p> Total de la orden: ${totalOrden} </p>
-                        <p> La misma se enviará a ${direccion}</p>
-                        <p> ¡Muchas gracias por tu compra!</p>
-                    </body>
-                  </html>`;
 
     let result = await transporter.sendMail({
       from: 'Compras',
       to: email,
       subject: 'Compra Finalizada',
-      html: message,
+      html: mailCompra.orderMessage(first_name.toUpperCase(), orden.numero_orden, productosOrden, totalOrden, direccion),
     });
 
     if (result) {

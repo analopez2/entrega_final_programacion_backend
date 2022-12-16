@@ -1,0 +1,233 @@
+# Productos
+
+components:
+  requestBodies:
+    productBody:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        codigo:
+          type: string
+        foto: 
+          type: string
+        precio:
+          type: integer
+          description: No puede ser negativo.
+        stock:
+          type: integer
+          description: No puede ser negativo.
+      example:
+        nombre: Iphone 12 128GB Black
+        descripcion: 'Sistema de dos cámaras de 12 MP: ultra gran angular y gran angular'
+        codigo: MGHU3LL
+        foto: https://www.iplace.com.uy/ccstore/v1/images/?source=/file/v5041155759851515875/products/100000180.00-iphone-12-mini-apple-negro-128gb-mge33lz.jpg&quality=0.8&outputFormat=JPEG
+        precio: 1269
+        stock: 18
+  errorResponses:
+    notLoginUser:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: array
+          items:
+            type: string
+      example:
+        status: "Error"
+        error: 
+          - "Debe estar logueado OR ruta /api/productos | method POST no autorizado"
+    notFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            status:
+              type: integer
+            error:
+              type: string
+          example:
+            status: "404"
+            error: 
+              - "Producto no encontrado"
+  schemas:
+    Producto:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        codigo:
+          type: string
+        foto:
+          type: string
+        precio: 
+          type: integer
+        stock:
+          type: integer
+        timestamp:
+          type: string
+        _id: 
+          type: ObjectId
+      example:
+        nombre: Iphone 12 64GB Black
+        descripcion: 'Sistema de dos cámaras de 12 MP: ultra gran angular y gran angular'
+        codigo: MHDA3LZ/A
+        foto: https://www.iplace.com.uy/ccstore/v1/images/?source=/file/v5883023851070341652/products/100000155.00-iphone-11-aple-negro-64-gb-mhda3lz-a.jpg
+        precio: 1380
+        stock: 15
+        timestamp: '2022-12-16T19:07:23.232Z'
+        _id: 639cc1ebd8f72f3e14af0a51
+
+paths:
+  /api/productos:
+    get:
+      summary: Obtener productos
+      tags:
+        - Productos
+      responses:
+        "200":
+          description: Listado de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Producto"
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+    post:
+      summary: Crear producto
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/productBody'      
+      responses:
+        "200":
+          description: Producto creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Producto"
+        "403":
+          description: Usuario no logueado o sin permisos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+  api/productos/{id}:
+    get:
+      summary: Obtener producto por id
+      tags:
+        - Productos
+      parameters:
+        - in: paths
+          name: id
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del producto a buscar
+      responses:
+        "200":
+          description: Detalle del producto
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Producto"
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notFound"
+    put:
+      summary: Actualizar producto por Id
+      tags:
+        - Productos
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del producto e editar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/productBody'
+      responses:
+        "200":
+          description: Detalle del producto actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Producto"
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notFound"
+    delete:
+      summary: Eliminar producto por id
+      tags:
+        - Productos
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del producto a eliminar
+      responses:
+        "200":
+          description: Detalle del producto actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje: 
+                    type: string
+                example:
+                  mensaje: Producto eliminado
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notFound"
+

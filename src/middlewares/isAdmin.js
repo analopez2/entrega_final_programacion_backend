@@ -3,7 +3,7 @@ const isAdmin = (req, res, next) => {
   if (role != 'admin') {
     return res.status(403).send({
       status: 'Error',
-      error: `ruta ${req.baseUrl} | method ${req.method} no autorizado`,
+      error: [`ruta ${req.baseUrl} | method ${req.method} no autorizado`],
     });
   }
   next();

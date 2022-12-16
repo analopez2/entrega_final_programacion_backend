@@ -43,10 +43,10 @@ export default class CarritosService {
 
     if (!product) throw { status: 404, error: 'Producto no encontrado' };
 
-    if (product.cantidad >= 1) {
-      cart.productos = cart.productos.filter((e) => e.producto._id != productId);
-    } else {
+    if (product.cantidad > 1) {
       product.cantidad--;
+    } else {
+      cart.productos = cart.productos.filter((e) => e.producto._id != productId);
     }
 
     return this.dao.updateById(id, cart);

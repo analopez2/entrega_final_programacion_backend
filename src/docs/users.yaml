@@ -7,28 +7,28 @@ components:
       properties:
         first_name:
           type: string
-          descripcion: Requerido - Nombre del usuario
+          description: Requerido - Nombre del usuario
         last_name:
           type: string
-          descripcion: Requerido - Apellido del usuario
+          description: Requerido - Apellido del usuario
         email:
           type: string
-          descripcion: Requerido - Correo del usuario, campo único
+          description: Requerido - Correo del usuario, campo único
         telefono:
           type: string
-          descripcion: Requerido - Felefono del usuario
+          description: Requerido - Felefono del usuario
         password:
           type: string
-          descripcion: Requerido - Contraseña del usuario
+          description: Requerido - Contraseña del usuario
         re_password:
           type: string
           descripción: Requerido - Contraseña repetida del usuario
         avatar:
           type: file
-          descripcion: Opcional - Imagen del usuario en la aplicacion, si no se envía se autogenera con una imagen por defecto
+          description: Opcional - Imagen del usuario en la aplicacion, si no se envía se autogenera con una imagen por defecto
         direccion:
           type: string
-          descripcion: Requerido - Dirección del usuario que se utilizará para los envíos
+          description: Requerido - Dirección del usuario que se utilizará para los envíos
       example:
         first_name: Ana
         last_name: Lopez
@@ -48,7 +48,7 @@ components:
         email: analopez@gmail.com
         password: '123'
   errorResponses:
-    badRequest:
+    registerError:
       type: object
       properties:
         status:
@@ -57,46 +57,76 @@ components:
           type: array
           items:
             type: string
+      example:
+        status: "Error"
+        error: 
+          - "El usuario ya se encuentra registrado"
+    logoinError:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: array
+          items:
+            type: string
+      example:
+        status: "Error"
+        error: 
+          - "Ya existe un usuario logueado"
+    logoutError:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: array
+          items:
+            type: string
+      example:
+        status: "Error"
+        error: 
+          - "Debe estar logueado"
   schemas:
     User:
       type: object
       properties:
         _id:
           type: ObjectId
-          descripcion: Id autogenerada por mongo
+          description: Id autogenerada por mongo
         first_name:
           type: string
-          descripcion: Nombre del usuario
+          description: Nombre del usuario
         last_name:
           type: string
-          descripcion: Apellido del usuario
+          description: Apellido del usuario
         email:
           type: string
-          descripcion: Correo del usuario, campo único
+          description: Correo del usuario, campo único
         telefono:
           type: string
-          descripcion: Felefono del usuario
+          description: Felefono del usuario
         password:
           type: string
-          descripcion: Contraseña Hasheada del usuario
+          description: Contraseña Hasheada del usuario
         role:
           type: string
-          descripcion: Rol del usuario en la aplicación
+          description: Rol del usuario en la aplicación
         avatar:
           type: string
-          descripcion: Imagen del usuario en la aplicacion
+          description: Imagen del usuario en la aplicacion
         carrito:
           type: ObjectId
-          descripcion: Id autogenerado por mongo para un carrito asociado al usuario
+          description: Id autogenerado por mongo para un carrito asociado al usuario
         direccion:
           type: string
-          descripcion: Dirección del usuario que se utilizará para los envíos
+          description: Dirección del usuario que se utilizará para los envíos
         createdAt:
           type: string
-          descripcion: Fecha de creación del usuario
+          description: Fecha de creación del usuario
         updatedAt: 
           type: string
-          descripcion: Fecha de ultima actualización del usuario
+          description: Fecha de ultima actualización del usuario
       example:
         _id: 639be5c3e117efc2a7aba112
         first_name: Ana
@@ -124,7 +154,7 @@ paths:
               $ref: '#/components/requestBodies/nuevoUsuario'
       responses:
         '200':
-          descripcion: Usuario agregado correctamente
+          description: Usuario agregado correctamente
           content:
             application/json:
               schema:
@@ -137,16 +167,20 @@ paths:
                     properties:
                       id:
                         type: string
-                        descripcion: Id autogenerado por Mongo
+                        description: Id autogenerado por Mongo
                       token:
                         type: string
-                        descripcion: Token generado para el usuario
+                        description: Token generado para el usuario
+                    example:
+                      status: "success"
+                      id: "639be5c3e117efc2a7aba112"
+                      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImZpcnN0X25hbWUiOiJhbmEiLCJsYXN0"
         '400':
-          descritpion: Fallo en la creacion de usuario
+          description: Fallo en la creacion de usuario
           content:
             application/json:
               schema:
-                $ref: '#/components/errorResponses/badRequest'
+                $ref: '#/components/errorResponses/registerError'
   /api/sessions/login:
     post:
       summary: Inicio de sesión
@@ -160,7 +194,7 @@ paths:
               $ref: '#/components/requestBodies/login'
       responses:
         '200':
-          descripcion: Usuario logueado
+          description: Usuario logueado
           content:
             application/json:
               schema:
@@ -171,11 +205,11 @@ paths:
                   user:
                     $ref: '#/components/schemas/User'
         '400':
-          descritpion: Fallo en la creacion de usuario
+          description: Fallo en el login de usuario
           content:
             application/json:
               schema:
-                $ref: '#/components/errorResponses/badRequest'
+                $ref: '#/components/errorResponses/logoinError'
   /api/sessions/logout:
     get:
       summary: Cierre de sesión
@@ -183,7 +217,7 @@ paths:
        - Users
       responses:
         '200':
-          descripcion: Finaliza la sessión correctamente
+          description: Finaliza la sessión correctamente
           content:
             application/json:
               schema:
@@ -193,9 +227,12 @@ paths:
                     type: string
                   payload:
                     type: string
+                example:
+                  status: success
+                  payload: Hasta luego ANA!
         '403':
-          descritpion: Error en el logout
+          description: Error en el logout
           content:
             application/json:
               schema:
-                $ref: '#/components/errorResponses/badRequest'
+                $ref: '#/components/errorResponses/logoutError'

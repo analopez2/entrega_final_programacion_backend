@@ -1,0 +1,159 @@
+# Ordenes
+
+components:
+  responses:
+    notLoginUser:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: array
+          items:
+            type: string
+      example:
+        status: "Error"
+        error: 
+          - "Debe estar logueado"
+    notFound:
+      type: object
+      properties:
+        status:
+          type: string
+        error: 
+          type:  string
+      example:
+        status: 404
+        error: 'Carrito no encontrado'
+    badRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        error: 
+          type:  string
+      example:
+        status: 400
+        error: 'El carrito debe tener productos para que se pueda comprar'
+  schemas:
+    Producto:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        codigo:
+          type: string
+        foto:
+          type: string
+        precio: 
+          type: integer
+        stock:
+          type: integer
+        timestamp:
+          type: string
+        _id: 
+          type: string
+      example:
+        nombre: Iphone 12 64GB Black
+        descripcion: 'Sistema de dos cámaras de 12 MP: ultra gran angular y gran angular'
+        codigo: MHDA3LZ/A
+        foto: https://www.iplace.com.uy/ccstore/v1/images/?source=/file/v5883023851070341652/products/100000155.00-iphone-11-aple-negro-64-gb-mhda3lz-a.jpg
+        precio: 1380
+        stock: 15
+        timestamp: '2022-12-16T19:07:23.232Z'
+        _id: 639cc1ebd8f72f3e14af0a51
+    Orden:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerada por mongo
+        items: 
+          type: array
+          items:
+            type: object
+            properties:
+              producto:
+                $ref: "#/components/schemas/Producto"
+              cantidad:
+                type: integer
+              _id: 
+                type: ObjectId
+        numero_orden: 
+          type: integer
+        email: 
+          type: string
+        direccion: 
+          type: string
+        timestamp:
+          type: string
+        estado:
+          type: string
+      example:
+        items:
+        - producto:
+            nombre: Iphone 12 64GB Black
+            descripcion: 'Sistema de dos cámaras de 12 MP: ultra gran angular y gran angular'
+            codigo: MHDA3LZ/A
+            foto: https://www.iplace.com.uy/ccstore/v1/images/?source=/file/v5883023851070341652/products/100000155.00-iphone-11-aple-negro-64-gb-mhda3lz-a.jpg
+            precio: 1380
+            stock: 15
+            timestamp: '2022-12-16T19:07:23.232Z'
+            _id: 639cc1ebd8f72f3e14af0a51
+            __v: 0
+          cantidad: 1
+          _id: 639cf3aa504ede4dac2bdb86
+        numero_orden: 0
+        email: anaplopez07+2@gmail.com
+        direccion: Juan José Elizalde 5565
+        timestamp: '2022-12-16T22:40:00.892Z'
+        estado: generada
+        _id: 639cf3c0504ede4dac2bdb8c
+paths:
+  api/ordenes:
+    post:
+      summary: Realizar orden
+      tags:
+        - Ordenes
+      responses:
+        "200":
+          description: Orden finalizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orden"
+        "400":
+          description: Carrito sin productos para comprar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/badRequest"
+        "403":
+          description: Fallo al realizar la orden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/notLoginUser"
+        "404":
+          description: Carrito no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/notFound"
+        "500":
+          description: Error interno
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  error:
+                    type: string
+                example:
+                  status: error
+                  error: Missing credentials for \"PLAIN\"
+

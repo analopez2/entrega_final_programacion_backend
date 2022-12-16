@@ -1,0 +1,233 @@
+# Carritos
+
+components:
+  errorResponses:
+    notLoginUser:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: array
+          items:
+            type: string
+      example:
+        status: "Error"
+        error: 
+          - "Debe estar logueado"
+    notFound:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            status:
+              type: integer
+            error:
+              type: string
+          example:
+            status: "404"
+            error: 
+              - "Producto no encontrado OR Carrito no encontrado"
+  schemas:
+    Producto:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        codigo:
+          type: string
+        foto:
+          type: string
+        precio: 
+          type: integer
+        stock:
+          type: integer
+        timestamp:
+          type: string
+        _id: 
+          type: string
+      example:
+        nombre: Iphone 12 64GB Black
+        descripcion: 'Sistema de dos cámaras de 12 MP: ultra gran angular y gran angular'
+        codigo: MHDA3LZ/A
+        foto: https://www.iplace.com.uy/ccstore/v1/images/?source=/file/v5883023851070341652/products/100000155.00-iphone-11-aple-negro-64-gb-mhda3lz-a.jpg
+        precio: 1380
+        stock: 15
+        timestamp: '2022-12-16T19:07:23.232Z'
+        _id: 639cc1ebd8f72f3e14af0a51
+    Carrito:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerada por mongo
+        timestamp:
+          type: string
+        productos:
+          type: array
+          items:
+            type: object
+            properties:
+              producto:
+                $ref: "#/components/schemas/Producto"
+              cantidad: 
+                type: integer
+              _id:
+                type: ObjectId
+      example:
+        _id: 639be5c3e117efc2a7aba110
+        timestamp: '2022-12-16T19:48:29.139Z'
+        productos:
+          - producto:
+              nombre: Iphone 12 64GB Black
+              descripcion: 'Sistema de dos cámaras de 12 MP: ultra gran angular y gran angular'
+              codigo: MHDA3LZ/A
+              foto: https://www.iplace.com.uy/ccstore/v1/images/?source=/file/v5883023851070341652/products/100000155.00-iphone-11-aple-negro-64-gb-mhda3lz-a.jpg
+              precio: 1380
+              stock: 15
+              timestamp: '2022-12-16T19:07:23.232Z'
+              _id: 639cc1ebd8f72f3e14af0a51
+              __v: 0
+            cantidad: 1
+            _id: 639ccb8de17c72e96ba5087f
+        __v: 0
+
+paths:
+  /api/carrito:
+    get:
+      summary: Obtener productos del Carrito
+      tags:
+        - Carritos
+      responses:
+        "200":
+          description: Listado de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Carrito/properties/productos"
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+  /api/carrito/{id}:
+    delete: 
+      summary: Eliminar todos los productos del Carrito
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: Id
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del carrito a vaciar
+      responses:
+        "200":
+          description: Detalle del producto actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id: 
+                    type: string
+                    description: Id del carrito
+                  timestamp:
+                    type: string
+                    descripcion: Fecha y hora
+                  productos: 
+                    type: array
+                example:
+                  _id: 639be5c3e117efc2a7aba110
+                  timestamp: '2022-12-16T20:24:48.128Z'
+                  productos: []
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+  /api/carrito/{id}/productos:
+    post:
+      summary: Agregar un producto al carrito, si el mismo ya se encuentra agregado le aumenta en 1 la cantidad
+      tags:
+        - Carritos
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del carrito al que se agregará el producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: ObjectId
+                  description: Id del producto a agregar
+              example:
+                product_id: 639cc1ebd8f72f3e14af0a51
+      responses:
+        "200":
+          description: Producto agregado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Carrito"
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+  /api/carrito/{id}/productos/{product_id}:
+    delete:
+      summary: Elimina un producto del carrito, si tiene cantidad mayor a 1 resta una unidad a la cantidad
+      tags:
+          - Carritos
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del carrito al que se desea eliminar un producto
+        - in: path
+          name: id_prod
+          schema:
+            type: ObjectId
+          requiered: true
+          description: Id (autogenerado por Mongo) del producto que se quiere eliminar del carrito
+      responses:
+        "200":
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carrito"
+        "403":
+          description: Usuario no logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notLoginUser"
+        "404":
+          description: Producto o Carrito no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/errorResponses/notFound"
+
+        
+
